@@ -3,6 +3,7 @@ monkey.patch_all()
 
 import threading
 from geventwebsocket import WebSocketApplication
+from geventwebsocket.protocols.base import BaseProtocol
 import logging
 
 from guacamole.net.SimpleGuacamoleTunnel import SimpleGuacamoleTunnel
@@ -12,8 +13,12 @@ from guacamole.protocol.ConfiguredGuacamoleSocket import ConfiguredGuacamoleSock
 from guacamole.protocol.GuacamoleConfiguration import GuacamoleConfiguration
 from guacamole.protocol.GuacamoleInstruction import GuacamoleInstruction
 
+class GuacamoleProtocol(BaseProtocol):
+    PROTOCOL_NAME = 'guacamole'
+
 class GuacamoleWebsocketRelay(WebSocketApplication):
     BUFFER_SIZE = 8192
+    protocol_class = GuacamoleProtocol
 
     def __init__(self, ws):
         super(GuacamoleWebsocketRelay, self).__init__(ws)
