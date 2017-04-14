@@ -3,16 +3,26 @@ monkey.patch_all()
 
 import threading
 from geventwebsocket import WebSocketApplication
+from geventwebsocket.protocols.base import BaseProtocol
 import logging
 
-from guacamole.net import SimpleGuacamoleTunnel, InetGuacamoleSocket, GuacamoleTunnel
-from guacamole.protocol import ConfiguredGuacamoleSocket, GuacamoleConfiguration, GuacamoleInstruction
+from guacamole.net.SimpleGuacamoleTunnel import SimpleGuacamoleTunnel
+from guacamole.net.InetGuacamoleSocket import InetGuacamoleSocket
+from guacamole.net.GuacamoleTunnel import GuacamoleTunnel
+from guacamole.protocol.ConfiguredGuacamoleSocket import ConfiguredGuacamoleSocket
+from guacamole.protocol.GuacamoleConfiguration import GuacamoleConfiguration
+from guacamole.protocol.GuacamoleInstruction import GuacamoleInstruction
+from guacamole.protocol.GuacamoleStatus import GuacamoleStatus
+
+class GuacamoleProtocol(BaseProtocol):
+    PROTOCOL_NAME = 'guacamole'
 
 class GuacamoleWebsocketRelay(WebSocketApplication):
     BUFFER_SIZE = 8192
+    protocol_class = GuacamoleProtocol
 
-    def __init__(self):
-        super(GuacamoleWebsocketRelay, self).__init__()
+    def __init__(self, ws):
+        super(GuacamoleWebsocketRelay, self).__init__(ws)
         logging.info("Created new GuacamoleWebSocketRelay, %s", self)
 
     def on_open(self):
@@ -26,7 +36,7 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
         current_client.tunnel = SimpleGuacamoleTunnel(
             socket=ConfiguredGuacamoleSocket(guacamole_server, session_configuration)
         )
-        readThread = _ReaderThread(self.ws, current_client)
+        readThread = _ReaderThread(self.ws, current_client.tunnel)
         readThread.start()
         logging.info("Reader thread started")
 
@@ -50,10 +60,10 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
             current_client.tunnel.close()
 
 
-def closeConnection(client, status):
+def closeConnection(websocket, status):
     wsStatusCode = status.websocket_status
     guacStatusCode = str(status.guacamole_status)
-    client.close(wsStatusCode, guacStatusCode)
+    websocket.close(wsStatusCode, guacStatusCode)
 
 class _ReaderThread(threading.Thread):
     def __init__(self, websocket, tunnel):
@@ -64,13 +74,12 @@ class _ReaderThread(threading.Thread):
 
     def run(self):
         reader = self.tunnel.acquireReader()
-        self.client.send(str(GuacamoleInstruction(GuacamoleTunnel.INTERNAL_DATA_OPCODE, self.tunnel.getUUID())))
+        self.websocket.send(str(GuacamoleInstruction(GuacamoleTunnel.INTERNAL_DATA_OPCODE, self.tunnel.getUUID())))
         readMessage = reader.read()
         while readMessage:
-            self.buffer.append(readMessage)
+            self.buffer.extend(readMessage)
             if not reader.available() or len(self.buffer) >= GuacamoleWebsocketRelay.BUFFER_SIZE:
-                self.client.send(self.buffer, False)
-                logging.debug("Sending message, length %d", len(self.buffer))
+                self.websocket.send(self.buffer, False)
                 del self.buffer[:]
             readMessage = reader.read()
-        closeConnection(self.client, GuacamoleStatus.SUCCESS)
+        closeConnection(self.websocket, GuacamoleStatus.SUCCESS)

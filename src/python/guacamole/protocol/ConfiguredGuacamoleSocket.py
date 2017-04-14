@@ -1,5 +1,6 @@
-from guacamole.net import GuacamoleSocket
+from guacamole.net.GuacamoleSocket import GuacamoleSocket
 from GuacamoleClientInformation import GuacamoleClientInformation
+from GuacamoleInstruction import GuacamoleInstruction
 
 class ConfiguredGuacamoleSocket(GuacamoleSocket):
     def __init__(self, socket, config, info=None):
@@ -24,7 +25,7 @@ class ConfiguredGuacamoleSocket(GuacamoleSocket):
         arg_names = args.instructions
         arg_values = []
         for name in arg_names:
-            arg_values.append(config.getParameter(name) or '')
+            arg_values.append(config.getParameter(str(name)) or '')
 
         writer.writeInstruction(GuacamoleInstruction('size',
             str(info.optimalScreenWidth),

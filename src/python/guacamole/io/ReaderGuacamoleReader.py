@@ -2,6 +2,7 @@
 import select
 
 from GuacamoleReader import GuacamoleReader
+from guacamole.protocol.GuacamoleInstruction import GuacamoleInstruction
 
 # TODO cleanup
 class ReaderGuacamoleReader(GuacamoleReader):
@@ -24,7 +25,7 @@ class ReaderGuacamoleReader(GuacamoleReader):
                 readChar = chr(self.buffer[i])
                 i += 1
                 if '0' <= readChar and readChar <= '9':
-                    elementLength = elementLength * 10 + readChar - ord('0')
+                    elementLength = elementLength * 10 + ord(readChar) - ord('0')
                 elif readChar == '.':
                     if i + elementLength < len(self.buffer):
                         terminator = chr(self.buffer[i + elementLength])
@@ -47,7 +48,7 @@ class ReaderGuacamoleReader(GuacamoleReader):
             numRead = self.socket.recv_into(chunk)
             if numRead <= 0:
                 return None
-            self.buffer.append(chunk[:numRead])
+            self.buffer.extend(chunk[:numRead])
 
     def readInstruction(self):
         chunk = self.read()
@@ -82,7 +83,8 @@ class ReaderGuacamoleReader(GuacamoleReader):
             if terminator == ';':
                 break
 
+        # Optimize?
         opcode = elements.pop(0)
-        instruction = GuacamoleInstruction(opcode, elements)
+        instruction = GuacamoleInstruction(opcode, *elements)
         return instruction;
 

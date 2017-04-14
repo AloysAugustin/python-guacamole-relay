@@ -3,11 +3,14 @@
 class GuacamoleInstruction(object):
     def __init__(self, opcode, *instructions):
         self._opcode = opcode
-        self._instructions = list(instructions)
+        if len(instructions) == 1 and hasattr(instructions[0], '__iter__'):
+            self._instructions = instructions[0]
+        else:
+            self._instructions = instructions
 
     def __str__(self):
         return ','.join([str(len(self._opcode)) + '.' + self._opcode]
-                      + [str(len(instruction)) + '.' + instruction for instruction in self._instructions]
+                      + [(str(len(i)) + '.' + str(i)) for i in self._instructions]
                 ) + ';'
 
     @property
