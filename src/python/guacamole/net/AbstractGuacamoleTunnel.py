@@ -12,8 +12,6 @@ class AbstractGuacamoleTunnel(GuacamoleTunnel):
         # Need to know if there's another thread waiting
         self.read_waiters = 0
         self.read_waiters_lock = threading.Lock()
-        self.reader = ReaderGuacamoleReader(self.getSocket())
-        self.writer = WriterGuacamoleWriter(self.getSocket())
 
     def acquireReader(self):
         with self.read_waiters_lock:
@@ -23,7 +21,7 @@ class AbstractGuacamoleTunnel(GuacamoleTunnel):
         with self.read_waiters_lock:
             self.read_waiters -= 1
 
-        return self.reader
+        return self.getSocket().getReader()
 
     def hasQueuedReaderThreads(self):
         with self.read_waiters_lock:
@@ -34,7 +32,7 @@ class AbstractGuacamoleTunnel(GuacamoleTunnel):
 
     def acquireWriter(self):
         self.writer_lock.acquire()
-        return self.writer
+        return self.getSocket().getWriter()
 
     def releaseWriter(self):
         self.writer_lock.release()
