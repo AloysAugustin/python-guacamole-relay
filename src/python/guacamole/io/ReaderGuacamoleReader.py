@@ -83,7 +83,8 @@ class ReaderGuacamoleReader(GuacamoleReader):
             if terminator == ';':
                 break
 
+        # Optimize?
         opcode = elements.pop(0)
-        instruction = GuacamoleInstruction(opcode, elements)
+        instruction = GuacamoleInstruction(opcode, *elements)
         return instruction;
 
