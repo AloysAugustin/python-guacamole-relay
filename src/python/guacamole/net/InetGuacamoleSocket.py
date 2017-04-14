@@ -20,7 +20,7 @@ class InetGuacamoleSocket(GuacamoleSocket):
 
     def close(self):
         try:
-            logger.debug('Closing connection to guacd.')
+            logging.debug('Closing connection to guacd.')
             self.socket.close()
         except:
             raise

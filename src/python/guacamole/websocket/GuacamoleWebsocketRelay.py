@@ -30,7 +30,7 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
         current_client.tunnel = SimpleGuacamoleTunnel(
             socket=ConfiguredGuacamoleSocket(guacamole_server, session_configuration)
         )
-        readThread = _ReaderThread(self.ws, current_client)
+        readThread = _ReaderThread(self.ws, current_client.tunnel)
         readThread.start()
         logging.info("Reader thread started")
 
@@ -54,10 +54,10 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
             current_client.tunnel.close()
 
 
-def closeConnection(client, status):
+def closeConnection(websocket, status):
     wsStatusCode = status.websocket_status
     guacStatusCode = str(status.guacamole_status)
-    client.close(wsStatusCode, guacStatusCode)
+    websocket.close(wsStatusCode, guacStatusCode)
 
 class _ReaderThread(threading.Thread):
     def __init__(self, websocket, tunnel):
@@ -68,13 +68,13 @@ class _ReaderThread(threading.Thread):
 
     def run(self):
         reader = self.tunnel.acquireReader()
-        self.client.send(str(GuacamoleInstruction(GuacamoleTunnel.INTERNAL_DATA_OPCODE, self.tunnel.getUUID())))
+        self.websocket.send(str(GuacamoleInstruction(GuacamoleTunnel.INTERNAL_DATA_OPCODE, self.tunnel.getUUID())))
         readMessage = reader.read()
         while readMessage:
             self.buffer.extend(readMessage)
             if not reader.available() or len(self.buffer) >= GuacamoleWebsocketRelay.BUFFER_SIZE:
-                self.client.send(self.buffer, False)
+                self.websocket.send(self.buffer, False)
                 logging.debug("Sending message, length %d", len(self.buffer))
                 del self.buffer[:]
             readMessage = reader.read()
-        closeConnection(self.client, GuacamoleStatus.SUCCESS)
+        closeConnection(self.websocket, GuacamoleStatus.SUCCESS)
