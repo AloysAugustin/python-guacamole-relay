@@ -7,7 +7,7 @@ class GuacamoleInstruction(object):
 
     def __str__(self):
         return ','.join([str(len(self._opcode)) + '.' + self._opcode]
-                      + [str(len(instruction)) + '.' + instruction for instruction in self._instructions]
+                      + [(str(len(i)) + '.' + str(i)) for i in self._instructions]
                 ) + ';'
 
     @property
