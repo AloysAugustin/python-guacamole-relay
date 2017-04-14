@@ -3,7 +3,7 @@
 class GuacamoleInstruction(object):
     def __init__(self, opcode, *instructions):
         self._opcode = opcode
-        self._instructions = list(instructions)
+        self._instructions = instructions
 
     def __str__(self):
         return ','.join([str(len(self._opcode)) + '.' + self._opcode]
