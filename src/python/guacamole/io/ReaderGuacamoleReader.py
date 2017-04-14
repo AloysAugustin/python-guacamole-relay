@@ -24,7 +24,7 @@ class ReaderGuacamoleReader(GuacamoleReader):
                 readChar = chr(self.buffer[i])
                 i += 1
                 if '0' <= readChar and readChar <= '9':
-                    elementLength = elementLength * 10 + readChar - ord('0')
+                    elementLength = elementLength * 10 + ord(readChar) - ord('0')
                 elif readChar == '.':
                     if i + elementLength < len(self.buffer):
                         terminator = chr(self.buffer[i + elementLength])
