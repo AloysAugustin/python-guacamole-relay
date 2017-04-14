@@ -80,7 +80,6 @@ class _ReaderThread(threading.Thread):
             self.buffer.extend(readMessage)
             if not reader.available() or len(self.buffer) >= GuacamoleWebsocketRelay.BUFFER_SIZE:
                 self.websocket.send(self.buffer, False)
-                logging.debug("Sending message, length %d", len(self.buffer))
                 del self.buffer[:]
             readMessage = reader.read()
         closeConnection(self.websocket, GuacamoleStatus.SUCCESS)
