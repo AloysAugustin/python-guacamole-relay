@@ -12,6 +12,7 @@ from guacamole.net.GuacamoleTunnel import GuacamoleTunnel
 from guacamole.protocol.ConfiguredGuacamoleSocket import ConfiguredGuacamoleSocket
 from guacamole.protocol.GuacamoleConfiguration import GuacamoleConfiguration
 from guacamole.protocol.GuacamoleInstruction import GuacamoleInstruction
+from guacamole.protocol.GuacamoleStatus import GuacamoleStatus
 
 class GuacamoleProtocol(BaseProtocol):
     PROTOCOL_NAME = 'guacamole'
