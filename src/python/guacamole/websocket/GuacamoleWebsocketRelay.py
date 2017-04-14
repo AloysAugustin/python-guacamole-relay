@@ -5,8 +5,12 @@ import threading
 from geventwebsocket import WebSocketApplication
 import logging
 
-from guacamole.net import SimpleGuacamoleTunnel, InetGuacamoleSocket, GuacamoleTunnel
-from guacamole.protocol import ConfiguredGuacamoleSocket, GuacamoleConfiguration, GuacamoleInstruction
+from guacamole.net.SimpleGuacamoleTunnel import SimpleGuacamoleTunnel
+from guacamole.net.InetGuacamoleSocket import InetGuacamoleSocket
+from guacamole.net.GuacamoleTunnel import GuacamoleTunnel
+from guacamole.protocol.ConfiguredGuacamoleSocket import ConfiguredGuacamoleSocket
+from guacamole.protocol.GuacamoleConfiguration import GuacamoleConfiguration
+from guacamole.protocol.GuacamoleInstruction import GuacamoleInstruction
 
 class GuacamoleWebsocketRelay(WebSocketApplication):
     BUFFER_SIZE = 8192

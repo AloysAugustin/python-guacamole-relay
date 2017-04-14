@@ -1,3 +1,4 @@
-from net import *
-from io import *
-from protocol import *
+import io
+import net
+import protocol
+import websocket

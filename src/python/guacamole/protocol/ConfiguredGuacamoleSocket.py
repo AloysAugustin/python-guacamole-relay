@@ -1,4 +1,4 @@
-from guacamole.net import GuacamoleSocket
+from guacamole.net.GuacamoleSocket import GuacamoleSocket
 from GuacamoleClientInformation import GuacamoleClientInformation
 from GuacamoleInstruction import GuacamoleInstruction
 

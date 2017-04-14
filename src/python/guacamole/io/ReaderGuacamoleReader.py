@@ -2,7 +2,7 @@
 import select
 
 from GuacamoleReader import GuacamoleReader
-from guacamole.protocol import GuacamoleInstruction
+from guacamole.protocol.GuacamoleInstruction import GuacamoleInstruction
 
 # TODO cleanup
 class ReaderGuacamoleReader(GuacamoleReader):

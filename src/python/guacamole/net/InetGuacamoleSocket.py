@@ -3,7 +3,8 @@ import logging
 import socket
 
 from GuacamoleSocket import GuacamoleSocket
-from guacamole.io import ReaderGuacamoleReader, WriterGuacamoleWriter
+from guacamole.io.ReaderGuacamoleReader import ReaderGuacamoleReader
+from guacamole.io.WriterGuacamoleWriter import WriterGuacamoleWriter
 
 class InetGuacamoleSocket(GuacamoleSocket):
     SOCKET_TIMEOUT = 15000

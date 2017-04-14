@@ -2,7 +2,8 @@
 import threading
 
 from GuacamoleTunnel import GuacamoleTunnel
-from guacamole.io import ReaderGuacamoleReader, WriterGuacamoleWriter
+from guacamole.io.ReaderGuacamoleReader import ReaderGuacamoleReader
+from guacamole.io.WriterGuacamoleWriter import WriterGuacamoleWriter
 
 class AbstractGuacamoleTunnel(GuacamoleTunnel):
     def __init__(self):

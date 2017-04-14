@@ -6,7 +6,7 @@ monkey.patch_all()
 from flask import Flask, app, render_template
 from werkzeug.debug import DebuggedApplication
 from geventwebsocket import WebSocketServer, Resource
-from guacamole.websocket import GuacamoleWebsocketRelay
+from guacamole.websocket.GuacamoleWebsocketRelay import GuacamoleWebsocketRelay
 
 
 flask_app = Flask(__name__, template_folder='../web')

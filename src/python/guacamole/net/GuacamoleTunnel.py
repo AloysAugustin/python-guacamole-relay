@@ -7,27 +7,27 @@ class GuacamoleTunnel(object):
     def acquireReader(self):
         raise Exception("Not Implemented")
 
-    def releaseReader():
+    def releaseReader(self):
         raise Exception("Not Implemented")
 
-    def hasQueuedReaderThreads():
+    def hasQueuedReaderThreads(self):
         raise Exception("Not Implemented")
 
-    def acquireWriter():
+    def acquireWriter(self):
         raise Exception("Not Implemented")
 
-    def releaseWriter():
+    def releaseWriter(self):
         raise Exception("Not Implemented")
 
-    def getUUID():
+    def getUUID(self):
         raise Exception("Not Implemented")
 
-    def getSocket():
+    def getSocket(self):
         raise Exception("Not Implemented")
 
-    def close():
+    def close(self):
         raise Exception("Not Implemented")
 
-    def isOpen():
+    def isOpen(self):
         raise Exception("Not Implemented")
 
