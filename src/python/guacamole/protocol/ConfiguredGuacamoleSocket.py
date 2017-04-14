@@ -1,5 +1,6 @@
 from guacamole.net import GuacamoleSocket
 from GuacamoleClientInformation import GuacamoleClientInformation
+from GuacamoleInstruction import GuacamoleInstruction
 
 class ConfiguredGuacamoleSocket(GuacamoleSocket):
     def __init__(self, socket, config, info=None):

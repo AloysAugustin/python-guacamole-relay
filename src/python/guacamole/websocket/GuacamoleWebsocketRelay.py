@@ -11,8 +11,8 @@ from guacamole.protocol import ConfiguredGuacamoleSocket, GuacamoleConfiguration
 class GuacamoleWebsocketRelay(WebSocketApplication):
     BUFFER_SIZE = 8192
 
-    def __init__(self):
-        super(GuacamoleWebsocketRelay, self).__init__()
+    def __init__(self, ws):
+        super(GuacamoleWebsocketRelay, self).__init__(ws)
         logging.info("Created new GuacamoleWebSocketRelay, %s", self)
 
     def on_open(self):
@@ -67,7 +67,7 @@ class _ReaderThread(threading.Thread):
         self.client.send(str(GuacamoleInstruction(GuacamoleTunnel.INTERNAL_DATA_OPCODE, self.tunnel.getUUID())))
         readMessage = reader.read()
         while readMessage:
-            self.buffer.append(readMessage)
+            self.buffer.extend(readMessage)
             if not reader.available() or len(self.buffer) >= GuacamoleWebsocketRelay.BUFFER_SIZE:
                 self.client.send(self.buffer, False)
                 logging.debug("Sending message, length %d", len(self.buffer))

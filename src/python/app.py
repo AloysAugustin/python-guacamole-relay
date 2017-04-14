@@ -29,7 +29,7 @@ WebSocketServer(
     ('0.0.0.0', 8000),
 
     Resource([
-        ('^/guac', ChatApplication),
+        ('^/guac', GuacamoleWebsocketRelay),
         ('^/.*', DebuggedApplication(flask_app))
     ]),
 

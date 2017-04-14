@@ -47,7 +47,7 @@ class ReaderGuacamoleReader(GuacamoleReader):
             numRead = self.socket.recv_into(chunk)
             if numRead <= 0:
                 return None
-            self.buffer.append(chunk[:numRead])
+            self.buffer.extend(chunk[:numRead])
 
     def readInstruction(self):
         chunk = self.read()
