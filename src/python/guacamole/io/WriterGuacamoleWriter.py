@@ -1,4 +1,4 @@
-
+import socket
 from guacamole.exceptions import GuacamoleUpstreamTimeoutException, GuacamoleServerException
 from GuacamoleWriter import GuacamoleWriter
 

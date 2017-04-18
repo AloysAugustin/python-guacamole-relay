@@ -74,8 +74,8 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
 
 
 def closeConnection(websocket, status):
-    wsStatusCode = status.websocket_status
-    guacStatusCode = str(status.guacamole_status)
+    wsStatusCode = status.websocket_code
+    guacStatusCode = str(status.guacamole_code)
     websocket.close(wsStatusCode, guacStatusCode)
 
 
