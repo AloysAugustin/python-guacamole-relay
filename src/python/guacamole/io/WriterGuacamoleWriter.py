@@ -1,4 +1,5 @@
 
+from guacamole.exceptions import GuacamoleUpstreamTimeoutException, GuacamoleServerException
 from GuacamoleWriter import GuacamoleWriter
 
 class WriterGuacamoleWriter(GuacamoleWriter):
@@ -6,8 +7,12 @@ class WriterGuacamoleWriter(GuacamoleWriter):
         self.socket = socket
 
     def write(self, chunk):
-        if self.socket.sendall(chunk):
-            raise Exception("Send error")
+        try:
+            self.socket.sendall(chunk):
+        except socket.timeout as e:
+            raise GuacamoleUpstreamTimeoutException(e)
+        except socket.error as e:
+            raise GuacamoleServerException(e)
 
     def writeInstruction(self, instruction):
         self.write(str(instruction))

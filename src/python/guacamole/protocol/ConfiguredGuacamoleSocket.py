@@ -1,3 +1,4 @@
+from guacamole.exceptions import GuacamoleServerException
 from guacamole.net.GuacamoleSocket import GuacamoleSocket
 from GuacamoleClientInformation import GuacamoleClientInformation
 from GuacamoleInstruction import GuacamoleInstruction
@@ -39,17 +40,17 @@ class ConfiguredGuacamoleSocket(GuacamoleSocket):
         ready = self.expect(reader, "ready")
         ready_args = ready.instructions
         if len(ready_args) == 0:
-            raise Exception("No connection ID received")
+            raise GuacamoleServerException("No connection ID received")
 
         self._id = ready_args[0]
 
     def expect(self, reader, opcode):
         instruction = reader.readInstruction()
         if not instruction:
-            raise Exception('End of stream while waiting for ' + opcode)
+            raise GuacamoleServerException('End of stream while waiting for ' + opcode)
         
         if instruction.opcode != opcode:
-            raise Exception('Received "{}" instruction while expecting "{}"'.format(instruction.opcode, opcode))
+            raise GuacamoleServerException('Received "{}" instruction while expecting "{}"'.format(instruction.opcode, opcode))
 
         return instruction
 

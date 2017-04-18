@@ -28,14 +28,19 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
     def on_open(self):
         logging.info("Connection!")
         current_client = self.ws.handler.active_client
-        guacamole_server = InetGuacamoleSocket("54.158.84.184", 4822)
-        session_configuration = GuacamoleConfiguration("ssh")
-        session_configuration.setParameter("hostname", "localhost")
-        session_configuration.setParameter("port", "22")
+        try:
+            guacamole_server = InetGuacamoleSocket("54.158.84.184", 4822)
+            session_configuration = GuacamoleConfiguration("ssh")
+            session_configuration.setParameter("hostname", "localhost")
+            session_configuration.setParameter("port", "22")
 
-        current_client.tunnel = SimpleGuacamoleTunnel(
-            socket=ConfiguredGuacamoleSocket(guacamole_server, session_configuration)
-        )
+            current_client.tunnel = SimpleGuacamoleTunnel(
+                socket=ConfiguredGuacamoleSocket(guacamole_server, session_configuration)
+            )
+        except GuacamoleException as e:
+            logging.exception("Creation of tunnel to guacd daemon failed")
+            closeConnection(self.ws, e.getStatus())
+
         readThread = _ReaderThread(self.ws, current_client.tunnel)
         readThread.start()
         logging.info("Reader thread started")
@@ -50,20 +55,29 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
 
         tunnel = current_client.tunnel
         writer = tunnel.acquireWriter()
-        writer.write(message)
+        try:
+            writer.write(message)
+        except GuacamoleException as e:
+            logging.exception('Unable to write to tunnel, closing connection')
+            closeConnection(self.ws, e.getStatus())
         tunnel.releaseWriter()
 
     def on_close(self, reason):
         logging.info("Connection closed :'(") 
         current_client = self.ws.handler.active_client
-        if current_client.tunnel:
-            current_client.tunnel.close()
+        if current_client.tunnel and current_client.tunnel.isOpen():
+            try:
+                current_client.tunnel.close()
+            except GuacamoleException as e:
+                logging.error("Unable to close guacamole tunnel: %s", current_client.tunnel)
 
 
 def closeConnection(websocket, status):
     wsStatusCode = status.websocket_status
     guacStatusCode = str(status.guacamole_status)
-    websocket.close(wsStatusCode, guacStatusCode)
+    try:
+        websocket.close(wsStatusCode, guacStatusCode)
+
 
 class _ReaderThread(threading.Thread):
     def __init__(self, websocket, tunnel):
