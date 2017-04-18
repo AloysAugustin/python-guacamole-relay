@@ -74,6 +74,8 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
 
 
 def closeConnection(websocket, status):
+    if websocket.closed:
+        return
     wsStatusCode = status.websocket_code
     guacStatusCode = str(status.guacamole_code)
     websocket.close(wsStatusCode, guacStatusCode)
@@ -87,13 +89,16 @@ class _ReaderThread(threading.Thread):
         self.buffer = bytearray(0)
 
     def run(self):
-        reader = self.tunnel.acquireReader()
-        self.websocket.send(str(GuacamoleInstruction(GuacamoleTunnel.INTERNAL_DATA_OPCODE, self.tunnel.getUUID())))
-        readMessage = reader.read()
-        while readMessage:
-            self.buffer.extend(readMessage)
-            if not reader.available() or len(self.buffer) >= GuacamoleWebsocketRelay.BUFFER_SIZE:
-                self.websocket.send(self.buffer, False)
-                del self.buffer[:]
+        try:
+            reader = self.tunnel.acquireReader()
+            self.websocket.send(str(GuacamoleInstruction(GuacamoleTunnel.INTERNAL_DATA_OPCODE, self.tunnel.getUUID())))
             readMessage = reader.read()
-        closeConnection(self.websocket, GuacamoleStatus.SUCCESS)
+            while readMessage:
+                self.buffer.extend(readMessage)
+                if not reader.available() or len(self.buffer) >= GuacamoleWebsocketRelay.BUFFER_SIZE:
+                    self.websocket.send(self.buffer, False)
+                    del self.buffer[:]
+                readMessage = reader.read()
+            closeConnection(self.websocket, GuacamoleStatus.SUCCESS)
+        except GuacamoleException as e:
+            closeConnection(self.websocket, GuacamoleStatus.SERVER_ERROR)
