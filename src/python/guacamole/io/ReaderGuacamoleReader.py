@@ -1,5 +1,6 @@
 
 import select
+import socket
 
 from GuacamoleReader import GuacamoleReader
 from guacamole.exceptions import GuacamoleServerException, GuacamoleUpstreamTimeoutException
