@@ -6,6 +6,7 @@ from geventwebsocket import WebSocketApplication
 from geventwebsocket.protocols.base import BaseProtocol
 import logging
 
+from guacamole.exceptions import GuacamoleException
 from guacamole.net.SimpleGuacamoleTunnel import SimpleGuacamoleTunnel
 from guacamole.net.InetGuacamoleSocket import InetGuacamoleSocket
 from guacamole.net.GuacamoleTunnel import GuacamoleTunnel
@@ -75,8 +76,7 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
 def closeConnection(websocket, status):
     wsStatusCode = status.websocket_status
     guacStatusCode = str(status.guacamole_status)
-    try:
-        websocket.close(wsStatusCode, guacStatusCode)
+    websocket.close(wsStatusCode, guacStatusCode)
 
 
 class _ReaderThread(threading.Thread):

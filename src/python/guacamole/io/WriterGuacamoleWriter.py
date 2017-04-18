@@ -8,7 +8,7 @@ class WriterGuacamoleWriter(GuacamoleWriter):
 
     def write(self, chunk):
         try:
-            self.socket.sendall(chunk):
+            self.socket.sendall(chunk)
         except socket.timeout as e:
             raise GuacamoleUpstreamTimeoutException(e)
         except socket.error as e:
