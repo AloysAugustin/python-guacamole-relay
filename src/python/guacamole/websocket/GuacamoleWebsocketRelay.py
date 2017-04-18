@@ -41,6 +41,7 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
         except GuacamoleException as e:
             logging.exception("Creation of tunnel to guacd daemon failed")
             closeConnection(self.ws, e.getStatus())
+            return
 
         readThread = _ReaderThread(self.ws, current_client.tunnel)
         readThread.start()
