@@ -67,7 +67,7 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
     def on_close(self, reason):
         logging.info("Connection closed :'(") 
         current_client = self.ws.handler.active_client
-        if current_client.tunnel and current_client.tunnel.isOpen():
+        if hasattr(current_client, 'tunnel') and current_client.tunnel.isOpen():
             try:
                 current_client.tunnel.close()
             except GuacamoleException as e:
