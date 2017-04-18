@@ -27,7 +27,7 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
         logging.info("Created new GuacamoleWebSocketRelay, %s", self)
 
     def on_open(self):
-        logging.info("Connection!")
+        logging.info("Connection request received")
         current_client = self.ws.handler.active_client
         try:
             guacamole_server = InetGuacamoleSocket("54.158.84.184", 4822)
@@ -60,12 +60,12 @@ class GuacamoleWebsocketRelay(WebSocketApplication):
         try:
             writer.write(message)
         except GuacamoleException as e:
-            logging.exception('Unable to write to tunnel, closing connection')
+            logging.error('Unable to write to tunnel, closing connection')
             closeConnection(self.ws, e.getStatus())
         tunnel.releaseWriter()
 
     def on_close(self, reason):
-        logging.info("Connection closed :'(") 
+        logging.info("Connection closed") 
         current_client = self.ws.handler.active_client
         if hasattr(current_client, 'tunnel') and current_client.tunnel.isOpen():
             try:

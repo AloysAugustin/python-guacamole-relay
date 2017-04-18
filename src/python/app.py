@@ -33,7 +33,5 @@ WebSocketServer(
     Resource([
         ('^/guac', GuacamoleWebsocketRelay),
         ('^/.*', DebuggedApplication(flask_app))
-    ]),
-
-    debug=True
+    ])
 ).serve_forever()
