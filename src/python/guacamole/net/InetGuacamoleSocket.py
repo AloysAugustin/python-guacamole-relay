@@ -8,7 +8,7 @@ from guacamole.io.ReaderGuacamoleReader import ReaderGuacamoleReader
 from guacamole.io.WriterGuacamoleWriter import WriterGuacamoleWriter
 
 class InetGuacamoleSocket(GuacamoleSocket):
-    SOCKET_TIMEOUT = 15000
+    SOCKET_TIMEOUT = 15.0
 
     def __init__(self, host, port):
         try:
